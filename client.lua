@@ -112,6 +112,13 @@ local function sendUIUpdateMessage(data)
     })
 end
 
+local function sendUILang()
+    SendNUIMessage({
+        action = 'setLang',
+        lang = GetConvar('qb_locale', 'en')
+    })
+end
+
 local function HandleSetupResource()
     QBCore.Functions.TriggerCallback('hud:server:getRank', function(isAdminOrGreater)
         if isAdminOrGreater then
@@ -127,6 +134,7 @@ local function HandleSetupResource()
             sendUIUpdateMessage(UIConfig)
         end
     end
+    sendUILang()
 end
 
 RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
