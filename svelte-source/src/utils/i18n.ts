@@ -2,7 +2,7 @@ import { writable } from "svelte/store";
 
 interface Translation {
   hudSettings, statusIcons, resetHud, resetHudDescription,
-  resetSettings, resetSettingsDescriptionLine1, resetSettingsDescriptionLine2
+  resetSettings, resettingHud, resetSettingsDescriptionLine1, resetSettingsDescriptionLine2
   optionsMenu, minimapVehicleCheckBoxPrimary, minimapVehicleCheckBoxSecondary, compassVehicleCheckBoxPrimary
   compassVehicleCheckBoxSecondary, compassFollowCheckBoxPrimary, compassFollowCheckBoxSecondary, notificationsMenu,
   menuSoundEffectsEnabled, resetSoundEffectsEnabled, guiSoundEffectsEnabled, mapNotificationsEnabled,
@@ -36,6 +36,7 @@ export const i18n = writable<Translation>({
   statusIcons: "Status Icons",
   resetHud: "Reset HUD",
   resetSettings: "Reset Settings",
+  resettingHud: "Resetting Hud...",
   resetHudDescription: "If your hud is acting up, give it a good ol' reset! Or you can do /resethud",
   resetSettingsDescriptionLine1: "If you want to reset your settings back to default; click this shiny button!",
   resetSettingsDescriptionLine2: "(you will have to relog for your menu to reset changes successfully)",

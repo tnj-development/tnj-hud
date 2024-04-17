@@ -25,7 +25,7 @@
       <p>{$i18n.resetHud}</p>
     </div>
 
-    <Button name="{$i18n.resetHud}" buttonClass="whitespace-nowrap hover:bg-red-600" disable={$MenuStore.isRestarting} disableText={"Resetting Hud..."}
+    <Button name="{$i18n.resetHud}" buttonClass="whitespace-nowrap hover:bg-red-600" disable={$MenuStore.isRestarting} disableText={$i18n.resettingHud}
       on:click={() => {fetchNui("restartHud"); $MenuStore.isRestarting = true;}}
     />
     <p class="text-base">{$i18n.resetHudDescription}</p>
