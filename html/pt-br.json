@@ -3,6 +3,7 @@
     "statusIcons": "Ícones de Status",
     "resetHud": "Resetar HUD",
     "resetSettings": "Resetar Configurações",
+    "resettingHud": "Resetando Hud...",
     "resetHudDescription": "Se seu HUD está com problemas, dê um velho reset! Ou pode usar o comando: /resethud",
     "resetSettingsDescriptionLine1": "Se você quiser resetar suas confgurações para o padrão; clique neste botão luminoso!",
     "resetSettingsDescriptionLine2": "(você terá que relogar para o menu resetar as configurações corretamente)",
