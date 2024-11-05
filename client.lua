@@ -865,20 +865,27 @@ local function updateVehicleHud(data)
 end
 
 local lastFuelUpdate = 0
-local lastFuelCheck = {}
+local lastFuelCheck = 0
 
 local function getFuelLevel(vehicle)
     local updateTick = GetGameTimer()
+    
     if (updateTick - lastFuelUpdate) > 2000 then
         lastFuelUpdate = updateTick
-        if Config.Fuel.enable then
-            lastFuelCheck = math.floor(exports[Config.Fuel.script]:GetFuel(vehicle))
-        else
-            lastFuelCheck = Entity(vehicle).state.fuel
+        
+        if Config.FuelScript == "ox_fuel" then
+            lastFuelCheck = math.floor(Entity(vehicle).state.fuel or 0) -- Default to 0 if fuel state is not set
+        elseif Config.FuelScript == "ps-fuel" then
+            lastFuelCheck = math.floor(exports['ps-fuel']:GetFuel(vehicle) or 0) -- Default to 0 if GetFuel returns nil
+        elseif Config.FuelScript == "LegacyFuel" then
+            lastFuelCheck = math.floor(exports['LegacyFuel']:GetFuel(vehicle) or 0) -- Default to 0 if GetFuel returns nil
         end
     end
+    
     return lastFuelCheck
 end
+
+
 
 -- HUD Update loop
 
@@ -1054,20 +1061,23 @@ CreateThread(function()
             local ped = PlayerPedId()
             local vehicle = GetVehiclePedIsIn(ped, false)
             
-            if IsPedInAnyVehicle(ped, false) and not IsThisModelABicycle(GetEntityModel(vehicle)) and not isElectric(vehicle) then
-                local fuelLevel
+            if IsPedInAnyVehicle(ped, false) and vehicle ~= 0 then
+                local model = GetEntityModel(vehicle)
                 
-                if Config.Fuel.enable then
-                    fuelLevel = exports[Config.Fuel.script]:GetFuel(vehicle)
-                else
-                    fuelLevel = Entity(vehicle).state.fuel
-                end
-                
-                if fuelLevel <= 20 then
-                    if Menu.isLowFuelChecked then
+                if not IsThisModelABicycle(model) and not isElectric(vehicle) then
+                    local fuelLevel
+                    if Config.FuelScript == "ox_fuel" then
+                        fuelLevel = Entity(vehicle).state.fuel
+                    elseif Config.FuelScript == "ps-fuel" then
+                        fuelLevel = exports['ps-fuel']:GetFuel(vehicle)
+                    elseif Config.FuelScript == "LegacyFuel" then
+                        fuelLevel = exports['LegacyFuel']:GetFuel(vehicle)
+                    end
+                    
+                    if fuelLevel and fuelLevel <= 20 and Menu.isLowFuelChecked then
                         TriggerServerEvent("InteractSound_SV:PlayOnSource", "pager", 0.10)
                         QBCore.Functions.Notify(Lang:t("notify.low_fuel"), "error")
-                        Wait(60000)
+                        Wait(60000) -- Wait 1 minute before re-checking
                     end
                 end
             end
@@ -1075,6 +1085,7 @@ CreateThread(function()
         Wait(10000)
     end
 end)
+
 
 -- Money HUD
 
