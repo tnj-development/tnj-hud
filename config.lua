@@ -10,7 +10,7 @@ Config.DisablePoliceStress = false -- Default: false, If true will disable stres
 
 
 -- Specify which fuel script to use: "ox_fuel", "ps-fuel", or "LegacyFuel"
-Config.FuelScript = "ps-fuel" 
+Config.FuelScript = "ps-fuel"
 
 -- Admin only to change hud icons/shapes
 Config.AdminOnly = false

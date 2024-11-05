@@ -876,9 +876,7 @@ local function getFuelLevel(vehicle)
         if Config.FuelScript == "ox_fuel" then
             lastFuelCheck = math.floor(Entity(vehicle).state.fuel or 0) -- Default to 0 if fuel state is not set
         elseif Config.FuelScript == "ps-fuel" then
-            lastFuelCheck = math.floor(exports['ps-fuel']:GetFuel(vehicle) or 0) -- Default to 0 if GetFuel returns nil
-        elseif Config.FuelScript == "LegacyFuel" then
-            lastFuelCheck = math.floor(exports['LegacyFuel']:GetFuel(vehicle) or 0) -- Default to 0 if GetFuel returns nil
+            lastFuelCheck = math.floor(exports[Config.FuelScript]:GetFuel(vehicle) or 0) -- Default to 0 if GetFuel returns nil
         end
     end
     
@@ -1069,9 +1067,7 @@ CreateThread(function()
                     if Config.FuelScript == "ox_fuel" then
                         fuelLevel = Entity(vehicle).state.fuel
                     elseif Config.FuelScript == "ps-fuel" then
-                        fuelLevel = exports['ps-fuel']:GetFuel(vehicle)
-                    elseif Config.FuelScript == "LegacyFuel" then
-                        fuelLevel = exports['LegacyFuel']:GetFuel(vehicle)
+                        fuelLevel = exports[Config.FuelScript]:GetFuel(vehicle)
                     end
                     
                     if fuelLevel and fuelLevel <= 20 and Menu.isLowFuelChecked then
