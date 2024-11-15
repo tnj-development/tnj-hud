@@ -142,7 +142,6 @@ RegisterNetEvent("QBCore:Client:OnPlayerUnload", function()
     PlayerData = {}
     admin = false
     SendAdminStatus()
-    TriggerServerEvent('ps-hud:server:SaveHealth', GetEntityHealth(PlayerPedId()))
 end)
 
 RegisterNetEvent("QBCore:Player:SetPlayerData", function(val)
@@ -158,10 +157,6 @@ AddEventHandler('onResourceStart', function(resourceName)
     -- local hudSettings = GetResourceKvpString('hudSettings')
     -- if hudSettings then loadSettings(json.decode(hudSettings)) end
     loadSettings()
-end)
-
-RegisterCommand('hud', function()
-   TriggerServerEvent('ps-hud:server:SaveHealth')
 end)
 
 AddEventHandler("pma-voice:radioActive", function(isRadioTalking)
