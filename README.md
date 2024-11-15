@@ -5,6 +5,8 @@ Ultra customizable hud featuring a unique and robust settings menu. Change eveyt
 
 ![Project Sloth Buttons 2](https://user-images.githubusercontent.com/91661118/170895968-c4224105-5c87-4947-af94-8e8bd792f566.png)
 
+### Dependancies 
+* [ox_lib](https://github.com/overextended/ox_lib)
 ### Optional:
 * [ps-buffs](https://github.com/Project-Sloth/ps-buffs)
 
@@ -43,6 +45,23 @@ This configuration setting is found in **ps-hud/config.lua** as shown in the GIF
 
 <br>
 <br>
+
+### QB Install
+- Step 1
+    - Make sure Config.Framework = 'qb'
+- Step 2
+    - Head to the fxmanifest and make sure line 18 
+        ``` 	--'@qbx_core/modules/playerdata.lua' ```
+        <strong><big>IS</big></strong> commented out 
+
+### QBox Install 
+- Step 1
+    - Make sure Config.Framework = 'qbx'
+- Step 2
+    -  - Head to the fxmanifest and make sure line 18 
+        ``` '@qbx_core/modules/playerdata.lua' ```
+        is <strong><big>NOT</big></strong> commented out 
+
 
 ![Project Sloth GitHub Project PS-HUD Features Banner](https://user-images.githubusercontent.com/91661118/170896822-4c6fcf43-94a3-4afd-b651-1eb76244fd8d.png)
 

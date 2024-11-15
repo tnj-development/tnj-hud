@@ -1,13 +1,25 @@
 Config = {}
 
+Config.Framework = 'qb' -- qbx or qb
 Config.OpenMenu = 'I' -- https://docs.fivem.net/docs/game-references/input-mapper-parameter-ids/keyboard/
+Config.Notify = 'ox' -- qb or ox or ps
 Config.StressChance = 0.1 -- Default: 10% -- Percentage Stress Chance When Shooting (0-1)
+Config.MaxShotBeforeStress = 5 -- Default: 5 -- Maximum Amount
 Config.UseMPH = true -- If true speed math will be done as MPH, if false KPH will be used (YOU HAVE TO CHANGE CONTENT IN STYLES.CSS TO DISPLAY THE CORRECT TEXT)
 Config.MinimumStress = 50 -- Minimum Stress Level For Screen Shaking
 Config.MinimumSpeedUnbuckled = 50 -- Going Over This Speed Will Cause Stress
 Config.MinimumSpeed = 100 -- Going Over This Speed Will Cause Stress
-Config.DisablePoliceStress = false -- Default: false, If true will disable stress for people with the police job
-Config.FuelScript = 'LegacyFuel' -- change to lj-fuel if you use lj-fuel or something else if you use any other LegcyFuel compatible script
+Config.BikeSpeed = 90 -- Going Over This Speed Will Cause Stress for Bike users
+Config.FlyingSpeed = 150 -- Going Over This Speed Will Cause Stress for Aircraft users
+Config.SeatBeltSpeed = 10 -- Going over this speed will make the seatbelt sound
+
+Config.DisableStress = { -- job TYPES that you want to disable stress for
+    'leo',
+    'ambulance',
+   -- 'all' -- If you want to disable stress for all jobs, uncomment this line
+}
+
+Config.FuelScript = 'LegacyFuel' -- ps-fuel/lj-fuel/LegacyFuel/cdn-fuel or if you use ox_fuel then you can ignore as we hard check for it in the fuelCheck function
 
 -- Admin only to change hud icons/shapes
 Config.AdminOnly = false

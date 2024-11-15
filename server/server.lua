@@ -1,27 +1,40 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local ResetStress = false
 
-QBCore.Commands.Add('cash', Lang:t('info.check_cash_balance'), {}, false, function(source, args)
-    local Player = QBCore.Functions.GetPlayer(source)
+lib.addCommand('cash', {
+    help = Lang:t('info.check_cash_balance'),
+}, function(source, args, raw)
+    local Player = getPlayer(source)
     local cashamount = Player.PlayerData.money.cash
     TriggerClientEvent('hud:client:ShowAccounts', source, 'cash', cashamount)
 end)
 
-QBCore.Commands.Add('bank', Lang:t('info.check_bank_balance'), {}, false, function(source, args)
-    local Player = QBCore.Functions.GetPlayer(source)
+lib.addCommand('bank', {
+    help = Lang:t('info.check_bank_balance'),
+}, function(source, args, raw)
+    local Player = getPlayer(source)
     local bankamount = Player.PlayerData.money.bank
     TriggerClientEvent('hud:client:ShowAccounts', source, 'bank', bankamount)
 end)
 
-QBCore.Commands.Add("dev", Lang:t('info.toggle_dev_mode'), {}, false, function(source, args)
+lib.addCommand('dev', {
+    help = Lang:t('info.toggle_dev_mode'),
+    restricted = 'group.admin'
+}, function(source, args, raw)
     TriggerClientEvent("qb-admin:client:ToggleDevmode", source)
-end, 'admin')
+end)
 
 RegisterNetEvent('hud:server:GainStress', function(amount)
     local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
+    local Player = getPlayer(src)
     local newStress
-    if not Player or (Config.DisablePoliceStress and Player.PlayerData.job.name == 'police') then return end
+    local stop = false
+    for k, v in pairs (Config.DisableStress) do
+        if v == Player.PlayerData.job.type or v == 'all' then
+            stop = true       
+        end
+    end
+    if stop then Player.Functions.SetMetaData('stress', 0) return end
     if not ResetStress then
         if not Player.PlayerData.metadata['stress'] then
             Player.PlayerData.metadata['stress'] = 0
@@ -36,12 +49,12 @@ RegisterNetEvent('hud:server:GainStress', function(amount)
     end
     Player.Functions.SetMetaData('stress', newStress)
     TriggerClientEvent('hud:client:UpdateStress', src, newStress)
-    TriggerClientEvent('QBCore:Notify', src, Lang:t("notify.stress_gain"), 'error', 1500)
+    Notify(src, Lang:t("notify.stress_gain"), 'error')
 end)
 
 RegisterNetEvent('hud:server:RelieveStress', function(amount)
     local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
+    local Player = getPlayer(src)
     local newStress
     if not Player then return end
     if not ResetStress then
@@ -58,7 +71,7 @@ RegisterNetEvent('hud:server:RelieveStress', function(amount)
     end
     Player.Functions.SetMetaData('stress', newStress)
     TriggerClientEvent('hud:client:UpdateStress', src, newStress)
-    TriggerClientEvent('QBCore:Notify', src, Lang:t("notify.stress_removed"))
+    Notify(src, Lang:t("notify.stress_removed"), 'success')
 end)
 
 RegisterNetEvent('hud:server:saveUIData', function(data)
@@ -194,15 +207,23 @@ RegisterNetEvent('hud:server:saveUIData', function(data)
     TriggerClientEvent('hud:client:UpdateUISettings', -1, uiConfigData)
 end)
 
-QBCore.Functions.CreateCallback('hud:server:getMenu', function(source, cb)
-    cb(Config.Menu)
+lib.callback.register('hud:server:getMenu', function(source)
+    return Config.Menu
 end) 
 
-QBCore.Functions.CreateCallback('hud:server:getRank', function(source, cb)
+lib.callback.register('hud:server:getRank', function(source)
     local src = source
     if QBCore.Functions.HasPermission(src, 'admin') or IsPlayerAceAllowed(src, 'command') then
-        cb(true)
+        return true
     else
-        cb(false)
+       return false
     end
+end)
+
+AddEventHandler('playerDropped', function(reason)
+    local src = source
+    local Player = getPlayer(src)
+    local ped = GetPlayerPed(src)
+    local health = GetEntityHealth(ped)
+    Player.Functions.SetMetaData('health', health)
 end)
