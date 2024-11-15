@@ -1181,7 +1181,7 @@ CreateThread(function() -- Shooting
         end
     end
     if run then return end
-    while not run do  -- runs extremely fast because IsPedShooting is being finnicky with slower loops
+    while not run do 
         local ped = PlayerPedId()
         local weapon = GetSelectedPedWeapon(ped)
         local chance = math.random()
