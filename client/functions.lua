@@ -59,12 +59,3 @@ function getData(type)
         return QBCore.Functions.GetPlayerData().metadata[type]
     end
 end
-
-function getArmor()
-    if not Config.PersistantArmor then return GetPedArmour(PlayerPedId()) end
-    if Config.Framework == 'qbx' then
-        return QBX.PlayerData.metadata.armor
-    elseif Config.Framework == 'qb' then
-        return QBCore.Functions.GetPlayerData().metadata.armor
-    end
-end
