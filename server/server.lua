@@ -226,4 +226,10 @@ AddEventHandler('playerDropped', function(reason)
     local ped = GetPlayerPed(src)
     local health = GetEntityHealth(ped)
     Player.Functions.SetMetaData('health', health)
+    if Config.PersistantArmor then 
+        local armor = GetPedArmour(ped)
+        Player.Functions.SetMetaData('armor', armor)
+    else
+        Player.Functions.SetMetaData('armor', 0)
+    end
 end)

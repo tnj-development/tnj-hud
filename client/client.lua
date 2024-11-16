@@ -136,6 +136,9 @@ RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
     loadSettings()
     PlayerData = QBCore.Functions.GetPlayerData()
     SetEntityHealth(PlayerPedId(), QBCore.Functions.GetPlayerData().metadata['health'])
+    if Config.PersistantArmor then
+        SetPedArmour(PlayerPedId(), QBCore.Functions.GetPlayerData().metadata['armor'])
+    end
 end)
 
 RegisterNetEvent("QBCore:Client:OnPlayerUnload", function()
@@ -940,7 +943,7 @@ CreateThread(function()
                     show,
                     health,
                     playerDead,
-                    GetPedArmour(player),
+                    GetPedArmour(PlayerPedId()),
                     getData('thirst'),
                     getData('hunger'),
                     getData('stress'),
@@ -1114,7 +1117,7 @@ CreateThread(function() -- Seatbelt/Harness
                     local beltspeed = GetEntitySpeed(GetVehiclePedIsIn(ped, false))
                     if beltspeed > Config.SeatBeltSpeed then
                         TriggerServerEvent("InteractSound_SV:PlayOnSource", "beltalarm", 0.8)
-                        Wait(10000)
+                        Wait(2000)
                     end
                 end
             end

@@ -12,6 +12,7 @@ Config.MinimumSpeed = 100 -- Going Over This Speed Will Cause Stress
 Config.BikeSpeed = 90 -- Going Over This Speed Will Cause Stress for Bike users
 Config.FlyingSpeed = 150 -- Going Over This Speed Will Cause Stress for Aircraft users
 Config.SeatBeltSpeed = 10 -- Going over this speed will make the seatbelt sound
+Config.PersistantArmor = true -- If true, armor will be save when people log out
 
 Config.DisableStress = { -- job TYPES that you want to disable stress for
     'leo',
