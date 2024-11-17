@@ -220,6 +220,15 @@ lib.callback.register('hud:server:getRank', function(source)
     end
 end)
 
+lib.callback.register('ps-hud:getHealth', function(source)
+    local src = source
+    local Player = getPlayer(src)
+    local ped = GetPlayerPed(src)
+    local health = GetEntityHealth(ped)
+    Player.Functions.SetMetaData('health', health)
+    return health
+end)
+
 AddEventHandler('playerDropped', function(reason)
     local src = source
     local Player = getPlayer(src)

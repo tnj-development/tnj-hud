@@ -135,7 +135,12 @@ RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
     -- if hudSettings then loadSettings(json.decode(hudSettings)) end
     loadSettings()
     PlayerData = QBCore.Functions.GetPlayerData()
-    SetEntityHealth(PlayerPedId(), QBCore.Functions.GetPlayerData().metadata['health'])
+    local health = PlayerData.metadata['health']
+    if not health then 
+        local add = lib.callback.await('ps-hud:getHealth', false)
+        health = add
+    end
+    SetEntityHealth(PlayerPedId(), health)
     if Config.PersistantArmor then
         SetPedArmour(PlayerPedId(), QBCore.Functions.GetPlayerData().metadata['armor'])
     end
