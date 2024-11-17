@@ -122,36 +122,26 @@ Modify this in `ps-hud/config.lua` as shown:
 
 ![Project Sloth GitHub Project PS-HUD Showcase Banner](https://user-images.githubusercontent.com/91661118/170896830-39245350-47c3-4b42-93d0-ac0ca35c3711.png)
 
+### Time to show you what it looks like!
+Here's a few showcased examples while using ps-hud.
 
-### Design mode and shapes:
-<video controls width="600">
-  <source src="https://user-images.githubusercontent.com/89323760/170896585-3f4a7e47-7589-4b55-98a2-0fedb81b4e15.mp4" type="video/mp4">
-</video>
+#### Design mode and shapes:
+https://user-images.githubusercontent.com/89323760/170896585-3f4a7e47-7589-4b55-98a2-0fedb81b4e15.mp4
 
-### Icon state and color:
-<video controls width="600">
-  <source src="https://user-images.githubusercontent.com/89323760/170898487-f86c7495-8fe2-4bcc-a539-c44e22f40c4b.mp4" type="video/mp4">
-</video>
+#### Icon state and color:
+https://user-images.githubusercontent.com/89323760/170898487-f86c7495-8fe2-4bcc-a539-c44e22f40c4b.mp4
 
-### Icon size and position:
-<video controls width="600">
-  <source src="https://user-images.githubusercontent.com/89323760/170896588-78bd864d-f88a-44a0-82cd-f654a35d89db.mp4" type="video/mp4">
-</video>
+#### Icon size and position:
+https://user-images.githubusercontent.com/89323760/170896588-78bd864d-f88a-44a0-82cd-f654a35d89db.mp4
 
-### Change progress color:
-<video controls width="600">
-  <source src="https://user-images.githubusercontent.com/89323760/170896589-e23f95cc-875a-4bb2-8673-39a36234f7bb.mp4" type="video/mp4">
-</video>
+#### Change progress color:
+https://user-images.githubusercontent.com/89323760/170896589-e23f95cc-875a-4bb2-8673-39a36234f7bb.mp4
 
-### Individually edit icons:
-<video controls width="600">
-  <source src="https://user-images.githubusercontent.com/89323760/170896590-0a9af313-19c3-4981-b9c5-a9b682a465f3.mp4" type="video/mp4">
-</video>
+#### Individually edit icons:
+https://user-images.githubusercontent.com/89323760/170896590-0a9af313-19c3-4981-b9c5-a9b682a465f3.mp4
 
-### Icon layout and spacing:
-<video controls width="600">
-  <source src="https://user-images.githubusercontent.com/89323760/170898540-5e3abd16-38bb-45d6-840e-5a2619c2076b.mp4" type="video/mp4">
-</video>
+#### Icon layout and spacing:
+https://user-images.githubusercontent.com/89323760/170898540-5e3abd16-38bb-45d6-840e-5a2619c2076b.mp4
 
 ### Credits:
 Inspiration and some code snippets from [Svelte & Lua Boilerplate](https://github.com/project-error/svelte-lua-boilerplate) by [Project Error](https://github.com/project-error)
