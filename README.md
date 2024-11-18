@@ -93,8 +93,6 @@ Modify this in `ps-hud/config.lua` as shown:
 			and we are just going to comment out these 
 			```lua
 				SetEntityHealth(ped, 200)
-				SetPlayerHealthRechargeMultiplier(player, 0.0)
-				SetPlayerHealthRechargeLimit(player, 0.0)
 			```
 			
 ### **QBox Install**  
