@@ -1122,7 +1122,6 @@ CreateThread(function() -- Seatbelt/Harness
                     local beltspeed = GetEntitySpeed(GetVehiclePedIsIn(ped, false))
                     if beltspeed > Config.SeatBeltSpeed then
                         TriggerServerEvent("InteractSound_SV:PlayOnSource", "beltalarm", 0.8)
-                        Wait(2000)
                     end
                 end
             end
