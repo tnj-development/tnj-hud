@@ -78,7 +78,7 @@ local function hasHarness()
     if not IsPedInAnyVehicle(ped, false) then return end
 
     local _harness = false
-    local hasHarness = exports['qb-smallresources']:HasHarness()
+    local hasHarness = getHarness()
     if hasHarness then
         _harness = true
     else
@@ -89,7 +89,7 @@ local function hasHarness()
 end
 
 local function loadSettings()
-    QBCore.Functions.Notify(Lang:t("notify.hud_settings_loaded"), "success")
+    Notify(Lang:t("notify.hud_settings_loaded"), "success")
     Wait(1000)
     TriggerEvent("hud:client:LoadMap")
 end
@@ -113,14 +113,13 @@ local function sendUIUpdateMessage(data)
 end
 
 local function HandleSetupResource()
-    QBCore.Functions.TriggerCallback('hud:server:getRank', function(isAdminOrGreater)
-        if isAdminOrGreater then
-            admin = true
-        else
-            admin = false
-        end
-        SendAdminStatus()
-    end)
+    local isAdminOrGreater = lib.callback.await('hud:server:getRank', false)
+    if isAdminOrGreater then
+        admin = true
+    else
+        admin = false
+    end
+    SendAdminStatus()
     if Config.AdminOnly then
         -- Send the client what the saved ui config is (enforced by the server)
         if next(UIConfig) then
@@ -131,12 +130,27 @@ end
 
 RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
     Wait(2000)
+    
     HandleSetupResource()
     -- local hudSettings = GetResourceKvpString('hudSettings')
     -- if hudSettings then loadSettings(json.decode(hudSettings)) end
     loadSettings()
     PlayerData = QBCore.Functions.GetPlayerData()
+    local player = PlayerId()
+    SetPlayerHealthRechargeMultiplier(player, 0.0)
+    SetPlayerHealthRechargeLimit(player, 0.0)
+    repeat Wait(1) until type(PlayerData) == 'table'
+    local health = PlayerData.metadata['health']
+    if not health then 
+        local add = lib.callback.await('ps-hud:getHealth', false)
+        health = add
+    end
+    SetEntityHealth(PlayerPedId(), health)
+    if Config.PersistantArmor then
+        SetPedArmour(PlayerPedId(), QBCore.Functions.GetPlayerData().metadata['armor'])
+    end
 end)
+
 
 RegisterNetEvent("QBCore:Client:OnPlayerUnload", function()
     PlayerData = {}
@@ -186,7 +200,7 @@ RegisterKeyMapping('menu', Lang:t('info.open_menu'), 'keyboard', Config.OpenMenu
 -- Reset hud
 local function restartHud()
     TriggerEvent("hud:client:playResetHudSounds")
-    QBCore.Functions.Notify(Lang:t("notify.hud_restart"), "error")
+    Notify(Lang:t("notify.hud_restart"), "error")
     Wait(1500)
     if IsPedInAnyVehicle(PlayerPedId()) then
         SendNUIMessage({
@@ -215,7 +229,7 @@ local function restartHud()
         show = true,
     })
     Wait(500)
-    QBCore.Functions.Notify(Lang:t("notify.hud_start"), "success")
+    Notify(Lang:t("notify.hud_start"), "success")
     SendNUIMessage({
         action = 'menu',
         topic = 'restart',
@@ -244,7 +258,9 @@ RegisterNetEvent("hud:client:resetStorage", function()
     if Menu.isResetSoundsChecked then
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "airwrench", 0.1)
     end
-    QBCore.Functions.TriggerCallback('hud:server:getMenu', function(menu) loadSettings(menu); SetResourceKvp('hudSettings', json.encode(menu)) end)
+    local menu = lib.callback.await('hud:server:getMenu', false)
+    loadSettings(menu);
+    SetResourceKvp('hudSettings', json.encode(menu))
 end)
 
 -- Notifications
@@ -414,7 +430,7 @@ RegisterNetEvent("hud:client:LoadMap", function()
             Wait(150)
         end
         if Menu.isMapNotifChecked then
-            QBCore.Functions.Notify(Lang:t("notify.load_square_map"))
+            Notify(Lang:t("notify.load_square_map"))
         end
         SetMinimapClipType(0)
         AddReplaceTexture("platform:/textures/graphics", "radarmasksm", "squaremap", "radarmasksm")
@@ -443,7 +459,7 @@ RegisterNetEvent("hud:client:LoadMap", function()
         end
         Wait(1200)
         if Menu.isMapNotifChecked then
-            QBCore.Functions.Notify(Lang:t("notify.loaded_square_map"))
+            Notify(Lang:t("notify.loaded_square_map"))
         end
     elseif Menu.isToggleMapShapeChecked == "circle" then
         RequestStreamedTextureDict("circlemap", false)
@@ -451,7 +467,7 @@ RegisterNetEvent("hud:client:LoadMap", function()
             Wait(150)
         end
         if Menu.isMapNotifChecked then
-            QBCore.Functions.Notify(Lang:t("notify.load_circle_map"))
+            Notify(Lang:t("notify.load_circle_map"))
         end
         SetMinimapClipType(1)
         AddReplaceTexture("platform:/textures/graphics", "radarmasksm", "circlemap", "radarmasksm")
@@ -480,7 +496,7 @@ RegisterNetEvent("hud:client:LoadMap", function()
         end
         Wait(1200)
         if Menu.isMapNotifChecked then
-            QBCore.Functions.Notify(Lang:t("notify.loaded_circle_map"))
+            Notify(Lang:t("notify.loaded_circle_map"))
         end
     end
 end)
@@ -580,12 +596,12 @@ RegisterNUICallback('cinematicMode', function(data, cb)
     if data.checked then
         CinematicShow(true)
         if Menu.isCinematicNotifChecked then
-            QBCore.Functions.Notify(Lang:t("notify.cinematic_on"))
+            Notify(Lang:t("notify.cinematic_on"))
         end
     else
         CinematicShow(false)
         if Menu.isCinematicNotifChecked then
-            QBCore.Functions.Notify(Lang:t("notify.cinematic_off"), 'error')
+            Notify(Lang:t("notify.cinematic_off"), 'error')
         end
         local player = PlayerPedId()
         local vehicle = GetVehiclePedIsIn(player)
@@ -740,9 +756,9 @@ RegisterCommand('+engine', function()
     local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
     if vehicle == 0 or GetPedInVehicleSeat(vehicle, -1) ~= PlayerPedId() then return end
     if GetIsVehicleEngineRunning(vehicle) then
-        QBCore.Functions.Notify(Lang:t("notify.engine_off"))
+        Notify(Lang:t("notify.engine_off"))
     else
-        QBCore.Functions.Notify(Lang:t("notify.engine_on"))
+        Notify(Lang:t("notify.engine_on"))
     end
     SetVehicleEngineOn(vehicle, not GetIsVehicleEngineRunning(vehicle), false, true)
 end)
@@ -784,6 +800,7 @@ local function updatePlayerHud(data)
     if shouldUpdate then
         -- Since we found updated data, replace player cache with data
         prevPlayerStats = data
+
         SendNUIMessage({
             action = 'hudtick',
             topic = 'status',
@@ -867,17 +884,19 @@ end
 local lastFuelUpdate = 0
 local lastFuelCheck = {}
 
+
+
 local function getFuelLevel(vehicle)
     local updateTick = GetGameTimer()
     if (updateTick - lastFuelUpdate) > 2000 then
         lastFuelUpdate = updateTick
-        lastFuelCheck = math.floor(exports[Config.FuelScript]:GetFuel(vehicle))
+        lastFuelCheck = fuelCheck(vehicle)
     end
     return lastFuelCheck
 end
 
 -- HUD Update loop
-
+local spawned = false
 CreateThread(function()
     local wasInVehicle = false
     while true do
@@ -899,9 +918,9 @@ CreateThread(function()
                 end
             end
 
-            playerDead = IsEntityDead(player) or PlayerData.metadata["inlaststand"] or PlayerData.metadata["isdead"] or false
+            playerDead = isDead()
             parachute = GetPedParachuteState(player)
-
+            
             -- Stamina
             if not IsEntityInWater(player) then
                 oxygen = 100 - GetPlayerSprintStaminaRemaining(playerId)
@@ -926,18 +945,19 @@ CreateThread(function()
             if IsPauseMenuActive() then
                 show = false
             end
-
+            
             local vehicle = GetVehiclePedIsIn(player)
-
+            local health = GetEntityHealth(PlayerPedId()) - 100
+            if health < 0 then health = 0 end
             if not (IsPedInAnyVehicle(player) and not IsThisModelABicycle(vehicle)) then
                 updatePlayerHud({
                     show,
-                    GetEntityHealth(player) - 100,
+                    health,
                     playerDead,
-                    GetPedArmour(player),
-                    thirst,
-                    hunger,
-                    stress,
+                    GetPedArmour(PlayerPedId()),
+                    getData('thirst'),
+                    getData('hunger'),
+                    getData('stress'),
                     voice,
                     LocalPlayer.state['radioChannel'],
                     radioTalking,
@@ -970,15 +990,15 @@ CreateThread(function()
                 end
 
                 wasInVehicle = true
-
+                
                 updatePlayerHud({
                     show,
-                    GetEntityHealth(player) - 100,
+                    health,
                     playerDead,
                     GetPedArmour(player),
-                    thirst,
-                    hunger,
-                    stress,
+                    getData('thirst'),
+                    getData('hunger'),
+                    getData('stress'),
                     voice,
                     LocalPlayer.state['radioChannel'],
                     radioTalking,
@@ -1052,7 +1072,7 @@ CreateThread(function()
                 if exports[Config.FuelScript]:GetFuel(GetVehiclePedIsIn(ped, false)) <= 20 then -- At 20% Fuel Left
                     if Menu.isLowFuelChecked then
                         TriggerServerEvent("InteractSound_SV:PlayOnSource", "pager", 0.10)
-                        QBCore.Functions.Notify(Lang:t("notify.low_fuel"), "error")
+                        Notify(Lang:t("notify.low_fuel"), "error")
                         Wait(60000) -- repeats every 1 min until empty
                     end
                 end
@@ -1096,7 +1116,7 @@ end)
 
 -- Harness Check / Seatbelt Check
 
-CreateThread(function()
+CreateThread(function() -- Seatbelt/Harness
     while true do
         Wait(1500)
         if LocalPlayer.state.isLoggedIn then
@@ -1104,33 +1124,52 @@ CreateThread(function()
             if IsPedInAnyVehicle(ped, false) then
                 hasHarness()
                 local veh = GetEntityModel(GetVehiclePedIsIn(ped, false))
-                if seatbeltOn ~= true and IsThisModelACar(veh) then
-                    TriggerEvent("InteractSound_CL:PlayOnOne", "beltalarm", 0.6)
+                if seatbeltOn == false and IsThisModelACar(veh) then
+                    local beltspeed = GetEntitySpeed(GetVehiclePedIsIn(ped, false))
+                    if beltspeed > Config.SeatBeltSpeed then
+                        TriggerServerEvent("InteractSound_SV:PlayOnSource", "beltalarm", 0.8)
+                    end
                 end
             end
         end
     end
 end)
 
-
--- Stress Gain
-
-CreateThread(function() -- Speeding
+CreateThread(function() -- Speeding / Stress
+    local run = false
+    for k, v in pairs (Config.DisableStress) do 
+        if v == 'all' then 
+            run = true
+            break
+        end
+    end
+    if run then  return end
     while true do
         if LocalPlayer.state.isLoggedIn then
             local ped = PlayerPedId()
+            local veh = GetVehiclePedIsIn(ped, false)
+            local model = GetEntityModel(veh)
+            local speed = GetEntitySpeed(GetVehiclePedIsIn(ped, false)) * speedMultiplier
             if IsPedInAnyVehicle(ped, false) then
-                local speed = GetEntitySpeed(GetVehiclePedIsIn(ped, false)) * speedMultiplier
-                local stressSpeed = seatbeltOn and config.MinimumSpeed or config.MinimumSpeedUnbuckled
-                local vehClass = GetVehicleClass(GetVehiclePedIsIn(ped, false))
-                if Config.VehClassStress[tostring(vehClass)] then
+                if IsThisModelABike(model) then
+                    local stressSpeed = config.BikeSpeed
                     if speed >= stressSpeed then
-                        TriggerServerEvent('hud:server:GainStress', math.random(1, 3))
+                        TriggerServerEvent('hud:server:GainStress', math.random(1, 2))
+                    end
+                elseif IsThisModelAHeli(model) or IsThisModelAPlane(model) then
+                    local stressSpeed = config.FlyingSpeed
+                    if speed >= stressSpeed then
+                        TriggerServerEvent('hud:server:GainStress', math.random(1, 2))
+                    end
+                elseif IsThisModelACar(model) then
+                local stressSpeed = seatbeltOn and config.MinimumSpeed or config.MinimumSpeedUnbuckled
+                if speed >= stressSpeed then
+                    TriggerServerEvent('hud:server:GainStress', math.random(1, 2))
                     end
                 end
             end
         end
-        Wait(10000)
+        Wait(20000)
     end
 end)
 
@@ -1146,24 +1185,36 @@ local function IsWhitelistedWeaponStress(weapon)
 end
 
 CreateThread(function() -- Shooting
-    while true do
-        if LocalPlayer.state.isLoggedIn then
-            local ped = PlayerPedId()
-            local weapon = GetSelectedPedWeapon(ped)
-            if weapon ~= `WEAPON_UNARMED` then
-                if IsPedShooting(ped) and not IsWhitelistedWeaponStress(weapon) then
-                    if math.random() < config.StressChance then
-                        TriggerServerEvent('hud:server:GainStress', math.random(1, 3))
-                    end
-                    Wait(100)
-                else
-                    Wait(500)
-                end
-            else
-                Wait(1000)
-            end
+    local run = false
+    local count = 0
+    for k, v in pairs (Config.DisableStress) do 
+        if v == 'all' then 
+            run = true
+            break
+        end
+    end
+    if run then return end
+    while not run do 
+        local ped = PlayerPedId()
+        local weapon = GetSelectedPedWeapon(ped)
+        local chance = math.random()
+        if weapon == `WEAPON_UNARMED` then 
+            Wait(2000) -- makes loop 2 seconds if not armed
         else
+            local ammo = GetAmmoInPedWeapon(ped, weapon)
             Wait(1000)
+            local newAmmo = GetAmmoInPedWeapon(ped, weapon)
+            local shots = ammo - newAmmo
+            if shots >= 1 and not IsWhitelistedWeaponStress(weapon) then
+                count = count + shots
+               if count >= Config.MaxShotBeforeStress or chance < config.StressChance then
+                    local amountStress = math.floor(count / Config.MaxShotBeforeStress)
+                    local amount = math.random(1,3)
+                    if amountStress > 1 then amount = amount * amountStress end
+                    count = 0
+                    TriggerServerEvent('hud:server:GainStress',amount)
+               end
+            end
         end
     end
 end)
@@ -1189,7 +1240,15 @@ local function GetEffectInterval(stresslevel)
 end
 
 CreateThread(function()
-    while true do
+    local run = false
+    for k, v in pairs (Config.DisableStress) do 
+        if v == 'all' then 
+            run = true
+            break
+        end
+    end
+    if run then return end
+    while not run do
         if LocalPlayer.state.isLoggedIn then
             local ped = PlayerPedId()
             local effectInterval = GetEffectInterval(stress)

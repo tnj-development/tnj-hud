@@ -4,46 +4,109 @@
 Ultra customizable hud featuring a unique and robust settings menu. Change eveything about your experience!
 
 ![Project Sloth Buttons 2](https://user-images.githubusercontent.com/91661118/170895968-c4224105-5c87-4947-af94-8e8bd792f566.png)
+### **Dependencies**
+- [ox_lib](https://github.com/overextended/ox_lib)
 
-### Optional:
-* [ps-buffs](https://github.com/Project-Sloth/ps-buffs)
+### **Optional**
+- [ps-buffs](https://github.com/Project-Sloth/ps-buffs)
 
-### ⚠️Important:
-- **Do not rename this resource from ps-hud or you will encounter issues.**
-- Locale is now supported. Make sure that your qb-core is update. You can update it [here](https://github.com/qbcore-framework/qb-core).
-- **This script is fully open source, it has no obfuscation.** Svelte compiled the js when it gets build and original source code is here [svelte-source](https://github.com/Project-Sloth/ps-hud/tree/main/svelte-source).
-- **If the minimap is pulsating or flickering**, make sure if you are using custom maps that you ensure ps-hud BEFORE map resource or if another script use the `SetRadarZoom()` native for disable it there.
+---
 
-<br>
-<br>
+
+## ⚠️ **Important Information**
+- **Do not rename the resource from `ps-hud`, or issues may occur.**
+- Locale is supported. Ensure your `qb-core` is up to date: [Update qb-core](https://github.com/qbcore-framework/qb-core).
+- **This script is fully open source** with no obfuscation. Svelte compiles the JS during the build. The original source code is available [here](https://github.com/Project-Sloth/ps-hud/tree/main/svelte-source).
+- **Minimap Flickering:** If the minimap pulsates or flickers, ensure that `ps-hud` is started **before** the map resource or adjust any scripts using `SetRadarZoom()`.
+
+---
 
 ![Project Sloth GitHub Project PS-HUD Install Banner](https://user-images.githubusercontent.com/91661118/170896809-5c15da71-5dd7-4f46-85c5-892701b1eea8.png)
 
+## **Installation Guide**
+Follow these steps for a seamless installation:
 
-### Start installing now
-We will now provide you with a step-by-step guide for the installation process. Shouldn't take too long and it shouldn't be too confusing either! 
+### **Step 1: Add to Your Resources**
+Drag and drop the `ps-hud` folder into your designated resources folder.
 
+💡 Need extra help? Watch this GIF for guidance:  
+![Installation GIF](https://user-images.githubusercontent.com/91661118/170898348-4d50573f-fd8e-447e-add1-9562a196c7ed.gif)
 
-### Step 1:
-Go ahead and start by dragging and dropping ps-hud into your designated resources folder.
+---
 
-If you are still lost, Slothy has created a few GIF's to help guide you through all the installation steps.
+### **Admin-Only Setting**  
+To restrict access to customization options, set **`Config.AdminOnly = true`**. While enabled, admin-saved settings override those of other players.  
 
-![chrome_KpjdUnvhgV](https://user-images.githubusercontent.com/91661118/170898348-4d50573f-fd8e-447e-add1-9562a196c7ed.gif)
+Modify this in `ps-hud/config.lua` as shown:  
+![Admin Setting GIF](https://user-images.githubusercontent.com/91661118/171066080-6bc11bb8-7cde-460b-8d73-bbc329644c83.gif)
 
+---
+
+## Framework-Specific Setup
+
+### **QB-Core**
+1. **Set Framework**:  
+    `Config.Framework = 'qb'` in the configuration file.
+2. **Update fxmanifest**:  
+   Comment out line 18:  
+   ```lua
+		-- '@qbx_core/modules/playerdata.lua'
+	```
+3. **Prevent Spawn In Health Regen**:
+	- if you use qb-ambulancejob head to client/job.lua
+		- look around line 107 for this event
+			```lua
+				RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+					exports.spawnmanager:setAutoSpawn(false)
+					local ped = PlayerPedId()
+					local player = PlayerId()
+					CreateThread(function()
+						Wait(5000)
+						SetEntityMaxHealth(ped, 200)
+						SetEntityHealth(ped, 200)
+						SetPlayerHealthRechargeMultiplier(player, 0.0)
+						SetPlayerHealthRechargeLimit(player, 0.0)
+					end)
+					CreateThread(function()
+						Wait(1000)
+						QBCore.Functions.GetPlayerData(function(PlayerData)
+							PlayerJob = PlayerData.job
+							onDuty = PlayerData.job.onduty
+							SetPedArmour(PlayerPedId(), PlayerData.metadata['armor'])
+							if (not PlayerData.metadata['inlaststand'] and PlayerData.metadata['isdead']) then
+								deathTime = Config.ReviveInterval
+								OnDeath()
+								DeathTimer()
+							elseif (PlayerData.metadata['inlaststand'] and not PlayerData.metadata['isdead']) then
+								SetLaststand(true)
+							else
+								TriggerServerEvent('hospital:server:SetDeathStatus', false)
+								TriggerServerEvent('hospital:server:SetLaststandStatus', false)
+							end
+							if PlayerJob.name == 'ambulance' and onDuty then
+								TriggerServerEvent('hospital:server:AddDoctor', PlayerJob.name)
+							end
+						end)
+					end)
+				end)
+			```
+			and we are just going to comment out these 
+			```lua
+				SetEntityHealth(ped, 200)
+			```
+			
+### **QBox Install**  
+1. **Set the Framework**:  
+   Ensure `Config.Framework = 'qbx'` in the configuration file.  
+2. **Update fxmanifest**:  
+   Verify that line 18 is **not commented out**:  
+   ```lua
+	'@qbx_core/modules/playerdata.lua'
+   ```
 <br>
-<br>
 
-### Admin Only Setting:
-If you don't want your community to be able to access the customizability options within the menu; make sure to change **Config.AdminOnly** to **true** instead of **false**. Keep in mind as well, while **true**, the changes you save will override for everyone on the server.
-
-This configuration setting is found in **ps-hud/config.lua** as shown in the GIF below.
-
-![chrome_ZwsidhP73y](https://user-images.githubusercontent.com/91661118/171066080-6bc11bb8-7cde-460b-8d73-bbc329644c83.gif)
-
-<br>
-<br>
-
+#
+ 
 ![Project Sloth GitHub Project PS-HUD Features Banner](https://user-images.githubusercontent.com/91661118/170896822-4c6fcf43-94a3-4afd-b651-1eb76244fd8d.png)
 
 
@@ -53,10 +116,9 @@ This configuration setting is found in **ps-hud/config.lua** as shown in the GIF
 * Customize settings for individual icons
 * Endless options for icon position and orientation
 <br>
-<br>
+# 
 
 ![Project Sloth GitHub Project PS-HUD Showcase Banner](https://user-images.githubusercontent.com/91661118/170896830-39245350-47c3-4b42-93d0-ac0ca35c3711.png)
-
 
 ### Time to show you what it looks like!
 Here's a few showcased examples while using ps-hud.
