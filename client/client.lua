@@ -130,11 +130,16 @@ end
 
 RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
     Wait(2000)
+    
     HandleSetupResource()
     -- local hudSettings = GetResourceKvpString('hudSettings')
     -- if hudSettings then loadSettings(json.decode(hudSettings)) end
     loadSettings()
     PlayerData = QBCore.Functions.GetPlayerData()
+    local player = PlayerId()
+    SetPlayerHealthRechargeMultiplier(player, 0.0)
+    SetPlayerHealthRechargeLimit(player, 0.0)
+    repeat Wait(1) until type(PlayerData) == 'table'
     local health = PlayerData.metadata['health']
     if not health then 
         local add = lib.callback.await('ps-hud:getHealth', false)
@@ -145,6 +150,7 @@ RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
         SetPedArmour(PlayerPedId(), QBCore.Functions.GetPlayerData().metadata['armor'])
     end
 end)
+
 
 RegisterNetEvent("QBCore:Client:OnPlayerUnload", function()
     PlayerData = {}
@@ -984,7 +990,7 @@ CreateThread(function()
                 end
 
                 wasInVehicle = true
-
+                
                 updatePlayerHud({
                     show,
                     health,
