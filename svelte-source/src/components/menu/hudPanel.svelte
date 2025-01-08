@@ -7,6 +7,7 @@
   import { fetchNui } from '../../utils/eventHandler';
   import PlayerHudStore from '../../stores/playerStatusHudStore';
   import { absoluteMapDimensions } from '../../types/types';
+  import { i18n } from '../../utils/i18n';
 
   function handleIsToggleMapShapeChecked(checked: boolean) {
     let shape: "circle" | "square" = checked ? "circle": "square";
@@ -21,43 +22,43 @@
       <PSLogo />
     </div>
     <div class="-mx-4 mb-4 text-2xl text-white">
-      <p>Reset HUD </p>
+      <p>{$i18n.resetHud}</p>
     </div>
-  
-    <Button name="Reset Hud" buttonClass="whitespace-nowrap hover:bg-red-600" disable={$MenuStore.isRestarting} disableText={"Resetting Hud..."}
+
+    <Button name="{$i18n.resetHud}" buttonClass="whitespace-nowrap hover:bg-red-600" disable={$MenuStore.isRestarting} disableText={$i18n.resettingHud}
       on:click={() => {fetchNui("restartHud"); $MenuStore.isRestarting = true;}}
     />
-    <p class="text-base">If your hud is acting up, give it a good ol' reset! Or you can do /resethud</p>
+    <p class="text-base">{$i18n.resetHudDescription}</p>
 
-    <Button name="Reset Settings" buttonClass="hover:bg-red-600"
+    <Button name="{$i18n.resetSettings}" buttonClass="hover:bg-red-600"
       on:click={() => {
         MenuStore.resetHudMenuSetting();
         // Send updated menu settings to client lua
         MenuStore.sendMenuSettingsToClient();
     }}/>
-    <p class="text-base">If you want to reset your settings back to default; click this shiny button!</p>
-    <p class="text-base">(you will have to relog for your menu to reset changes successfully)</p>
+    <p class="text-base">{$i18n.resetSettingsDescriptionLine1}</p>
+    <p class="text-base">{$i18n.resetSettingsDescriptionLine2}</p>
   </div>
 
   <hr>
 
   <div class="my-3 text-xl text-white">
-    <p>Options</p>
+    <p>{$i18n.optionsMenu}</p>
   </div>
   <div class="mx-4 mb-4 flex flex-col">
     <Checkbox bind:checked={$MenuStore.isOutMapChecked}
-      primaryText={"Show Minimap Only in Vehicle"}
-      secondaryText={"Disabling this will always keep your minimap on your screen"}
+      primaryText={$i18n.minimapVehicleCheckBoxPrimary}
+      secondaryText={$i18n.minimapVehicleCheckBoxSecondary}
       handleUpdateFunction={(checked) => fetchNui("showOutMap", {checked})}
     />
     <Checkbox bind:checked={$MenuStore.isOutCompassChecked}
-      primaryText={"Show Compass Only in Vehicle"}
-      secondaryText={"Disabling this will always keep your compass on your screen"}
+      primaryText={$i18n.compassVehicleCheckBoxPrimary}
+      secondaryText={$i18n.compassFollowCheckBoxSecondary}
       handleUpdateFunction={(checked) => fetchNui("showOutCompass", {checked})}
     />
     <Checkbox bind:checked={$MenuStore.isCompassFollowChecked}
-      primaryText={"Show Compass Follow Cam"}
-      secondaryText={"Disabling this will make it so you can no longer use your mouse to rotate the compass around"}
+      primaryText={$i18n.compassFollowCheckBoxPrimary}
+      secondaryText={$i18n.compassFollowCheckBoxSecondary}
       handleUpdateFunction={(checked) => fetchNui("showFollowCompass", {checked})}
     />
   </div>
@@ -65,73 +66,73 @@
   <hr>
 
   <div class="my-3 text-xl text-white">
-    <p>Notifications</p>
+    <p>{$i18n.notificationsMenu}</p>
   </div>
 
   <div class="mx-4 mb-4 flex flex-col">
     <Checkbox bind:checked={$MenuStore.isOpenMenuSoundsChecked}
-      primaryText={"Menu Sound Effect Enabled"} handleUpdateFunction={(checked) => fetchNui("openMenuSounds", {checked})}
+      primaryText={$i18n.menuSoundEffectsEnabled} handleUpdateFunction={(checked) => fetchNui("openMenuSounds", {checked})}
     />
     <Checkbox bind:checked={$MenuStore.isResetSoundsChecked}
-      primaryText={"Reset Hud Sound Effects Enabled"} handleUpdateFunction={(checked) => fetchNui("resetHudSounds", {checked})}
+      primaryText={$i18n.resetSoundEffectsEnabled} handleUpdateFunction={(checked) => fetchNui("resetHudSounds", {checked})}
     />
     <Checkbox bind:checked={$MenuStore.isListSoundsChecked}
-      primaryText={"GUI Sound Effects Enabled"} handleUpdateFunction={(checked) => fetchNui("checklistSounds", {checked})}
+      primaryText={$i18n.guiSoundEffectsEnabled} handleUpdateFunction={(checked) => fetchNui("checklistSounds", {checked})}
     />
     <Checkbox bind:checked={$MenuStore.isMapNotifyChecked}
-      primaryText={"Map Notifications Enabled"} handleUpdateFunction={(checked) => fetchNui("showMapNotif", {checked})}
+      primaryText={$i18n.mapNotificationsEnabled} handleUpdateFunction={(checked) => fetchNui("showMapNotif", {checked})}
     />
     <Checkbox bind:checked={$MenuStore.isLowFuelAlertChecked}
-      primaryText={"Low Fuel Alert Enabled"} handleUpdateFunction={(checked) => fetchNui("showFuelAlert", {checked})}
+      primaryText={$i18n.lowFuelNotificationsEnabled} handleUpdateFunction={(checked) => fetchNui("showFuelAlert", {checked})}
     />
     <Checkbox bind:checked={$MenuStore.isCinematicNotifyChecked}
-      primaryText={"Cinematic Mode Notifications"} handleUpdateFunction={(checked) => fetchNui("showCinematicNotif", {checked})}
+      primaryText={$i18n.cinematicModeNotificationEnabled} handleUpdateFunction={(checked) => fetchNui("showCinematicNotif", {checked})}
     />
   </div>
 
   <hr>
 
   <div class="my-3 text-xl text-white">
-    <p>Status</p>
+    <p>{$i18n.statusMenu}</p>
   </div>
   <div class="mx-4 mb-4 flex flex-col">
     <Checkbox bind:checked={$PlayerHudStore.dynamicIcons.health}
-      primaryText={"Show Health Always"}
+      primaryText={$i18n.showHealthAlways}
       handleUpdateFunction={(checked) => {
         PlayerHudStore.updateShowingDynamicIcon("health", checked);
         fetchNui("dynamicChange");
       }}
     />
     <Checkbox bind:checked={$PlayerHudStore.dynamicIcons.armor}
-      primaryText={"Show Armor Always"}
+      primaryText={$i18n.showArmorAlways}
       handleUpdateFunction={(checked) => {
         PlayerHudStore.updateShowingDynamicIcon("armor", checked);
         fetchNui("dynamicChange");
       }}
     />
     <Checkbox bind:checked={$PlayerHudStore.dynamicIcons.hunger}
-      primaryText={"Show Hunger Always"}
+      primaryText={$i18n.showHungerAlways}
       handleUpdateFunction={(checked) => {
         PlayerHudStore.updateShowingDynamicIcon("hunger", checked);
         fetchNui("dynamicChange");
       }}
     />
     <Checkbox bind:checked={$PlayerHudStore.dynamicIcons.thirst}
-      primaryText={"Show Thirst Always"}
+      primaryText={$i18n.showThirstAlways}
       handleUpdateFunction={(checked) => {
         PlayerHudStore.updateShowingDynamicIcon("thirst", checked);
         fetchNui("dynamicChange");
       }}
     />
     <Checkbox bind:checked={$PlayerHudStore.dynamicIcons.stress}
-      primaryText={"Show Stress Always"}
+      primaryText={$i18n.showStressAlways}
       handleUpdateFunction={(checked) => {
         PlayerHudStore.updateShowingDynamicIcon("stress", checked);
         fetchNui("dynamicChange");
       }}
     />
     <Checkbox bind:checked={$PlayerHudStore.dynamicIcons.oxygen}
-      primaryText={"Show Oxygen Always"}
+      primaryText={$i18n.showOxygenAlways}
       handleUpdateFunction={(checked) => {
         PlayerHudStore.updateShowingDynamicIcon("oxygen", checked);
         fetchNui("dynamicChange");
@@ -142,31 +143,31 @@
   <hr>
 
   <div class="my-3 text-xl text-white">
-    <p>Vehicle</p>
+    <p>{$i18n.vehicleMenu}</p>
   </div>
   <div class="mx-4 mb-4 flex flex-col">
-    <Switch checked={$MenuStore.isToggleMapShapeChecked == "circle"} checkedText="Minimap Circle" unCheckedText="Minimap Square"
+    <Switch checked={$MenuStore.isToggleMapShapeChecked == "circle"} checkedText={$i18n.minimapTypeCircle} unCheckedText={$i18n.minimapTypeSquare}
       handleUpdateFunction={(checked) => handleIsToggleMapShapeChecked(checked)}
     />
     <p class="font-semibold text-base pb-2">
-      Whether it's square or circle you desire, you have the ability to choose!
+      {$i18n.minimapTypeDescription}
     </p>
 
     <Checkbox bind:checked={$MenuStore.isMapEnabledChecked}
-      primaryText={"Minimap Enabled"} handleUpdateFunction={(checked) => fetchNui("HideMap", {checked})}
+      primaryText={$i18n.minimapEnabled} handleUpdateFunction={(checked) => fetchNui("HideMap", {checked})}
     />
     <Checkbox bind:checked={$MenuStore.isToggleMapBordersChecked}
-      primaryText={"Minimap Borders Enabled"} handleUpdateFunction={(checked) => fetchNui("ToggleMapBorders", {checked})}
+      primaryText={$i18n.minimapBordersEnabled} handleUpdateFunction={(checked) => fetchNui("ToggleMapBorders", {checked})}
     />
     <Checkbox bind:checked={$PlayerHudStore.dynamicIcons.engine}
-      primaryText={"Show Engine Always"}
+      primaryText={$i18n.showEngineAlways}
       handleUpdateFunction={(checked) => {
         PlayerHudStore.updateShowingDynamicIcon("engine", checked);
         fetchNui("dynamicChange");
       }}
     />
     <Checkbox bind:checked={$PlayerHudStore.dynamicIcons.nitro}
-      primaryText={"Show Nitro Always"}
+      primaryText={$i18n.showNitroAlways}
       handleUpdateFunction={(checked) => {
         PlayerHudStore.updateShowingDynamicIcon("nitro", checked);
         fetchNui("dynamicChange");
@@ -177,31 +178,31 @@
   <hr>
 
   <div class="my-3 text-xl text-white">
-    <p>Compass</p>
+    <p>{$i18n.compassMenu}</p>
   </div>
   <div class="mx-4 mb-4 flex flex-col">
     <Checkbox bind:checked={$MenuStore.isShowCompassChecked}
-      primaryText={"Compass Enabled"} handleUpdateFunction={(checked) => fetchNui("showCompassBase", {checked})}
-      secondaryText={"Disabling this will make it so you can't see the compass navigation"}
+      primaryText={$i18n.compassEnabled} handleUpdateFunction={(checked) => fetchNui("showCompassBase", {checked})}
+      secondaryText={$i18n.compassEnabledDescription}
     />
     <Checkbox bind:checked={$MenuStore.isShowStreetsChecked}
-      primaryText={"Show Street Names Enabled"} handleUpdateFunction={(checked) => fetchNui("showStreetsNames", {checked})}
-      secondaryText={"Disabling this will make it so you can't see the street names / locations"}
+      primaryText={$i18n.showStreetNamesEnabled} handleUpdateFunction={(checked) => fetchNui("showStreetsNames", {checked})}
+      secondaryText={$i18n.showStreetNamesDescription}
     />
     <Checkbox bind:checked={$MenuStore.isPointerShowChecked}
-      primaryText={"Show Compass Pointer Enabled"} handleUpdateFunction={(checked) => fetchNui("showPointerIndex", {checked})}
-      secondaryText={"Disabling this will make it so you can't see your pointer index to pinpoint your exact cardinal directions"}
+      primaryText={$i18n.showCompassPointerEnabled} handleUpdateFunction={(checked) => fetchNui("showPointerIndex", {checked})}
+      secondaryText={$i18n.showCompassPointerDescription}
     />
   </div>
 
   <hr>
 
   <div class="my-3 text-xl text-white">
-    <p>Cinematic Mode</p>
+    <p>{$i18n.cinematicMenu}</p>
   </div>
   <div class="mx-4 mb-4 flex flex-row gap-5">
     <Checkbox bind:checked={$MenuStore.isCineamticModeChecked}
-      primaryText={"Show Cinematic Bars Enabled"} handleUpdateFunction={(checked) => fetchNui("cinematicMode", {checked})}
+      primaryText={$i18n.showCinematicBarsEnabled} handleUpdateFunction={(checked) => fetchNui("cinematicMode", {checked})}
     />
     <p class="self-center ml-auto opacity-05 select-none">{ String.fromCharCode(...absoluteMapDimensions)}</p>
   </div>

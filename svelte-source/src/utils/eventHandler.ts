@@ -1,26 +1,28 @@
 import { onMount, onDestroy } from "svelte";
-import { get } from 'svelte/store';
-import CompassHudStore from '../stores/compassHudStore';
-import MenuStore from '../stores/menuStore';
-import MoneyHudStore from '../stores/moneyHudStore';
-import PlayerHudStore from '../stores/playerStatusHudStore';
+import { get } from "svelte/store";
+import CompassHudStore from "../stores/compassHudStore";
+import MenuStore from "../stores/menuStore";
+import MoneyHudStore from "../stores/moneyHudStore";
+import PlayerHudStore from "../stores/playerStatusHudStore";
 import ExternalStatusStore from "../stores/externalStatusStore";
-import LayoutStore from '../stores/layoutStore';
-import VehicleHudStore from '../stores/vehicleHudStore';
-import ColorEffectStore from '../stores/colorEffectStore';
-import ProfileStore from '../stores/profileStore';
-import { colorStoreLocalStorageName,
-         playerStoreLocalStorageName,
-         layoutStoreLocalStorageName,
-         profileLocalStorageName,
-} from '../types/types';
+import LayoutStore from "../stores/layoutStore";
+import VehicleHudStore from "../stores/vehicleHudStore";
+import ColorEffectStore from "../stores/colorEffectStore";
+import ProfileStore from "../stores/profileStore";
+import { initI18n } from './i18n';
+import {
+  colorStoreLocalStorageName,
+  playerStoreLocalStorageName,
+  layoutStoreLocalStorageName,
+  profileLocalStorageName,
+} from "../types/types";
 
 interface nuiMessage {
   data: {
-    action: string,
-    topic?: string,
-    [key: string]: any,
-  },
+    action: string;
+    topic?: string;
+    [key: string]: any;
+  };
 }
 
 export function EventHandler() {
@@ -46,7 +48,7 @@ export function EventHandler() {
             break;
           case "status":
             VehicleHudStore.receiveUpdateMessage(event.data as any);
-          break;
+            break;
         }
         break;
       case "externalstatus":
@@ -55,7 +57,9 @@ export function EventHandler() {
             ExternalStatusStore.receiveBuffStatusMessage(event.data as any);
             break;
           case "enhancement":
-            ExternalStatusStore.receiveEnhancementStatusMessage(event.data as any);
+            ExternalStatusStore.receiveEnhancementStatusMessage(
+              event.data as any
+            );
             break;
         }
         break;
@@ -105,6 +109,9 @@ export function EventHandler() {
         LayoutStore.receiveUIUpdateMessage(event.data.layout);
         ColorEffectStore.receiveUIUpdateMessage(event.data.colors);
         break;
+      case "setLang":
+        initI18n(event.data.lang);
+        break;
     }
   }
 
@@ -126,14 +133,15 @@ export async function fetchNui(eventName: string, data: unknown = {}) {
   try {
     const resp = await fetch(`https://${resourceName}/${eventName}`, options);
     return await resp.json();
-  } catch(err) {
-  }
+  } catch (err) {}
 }
 
 function serializeIconData(iconData) {
   let result = {};
-  for(const [key, value] of Object.entries(iconData)) {
-    let newObject = (({ icon, isShowing, name, progressValue, ...o }) => o)(value as any)
+  for (const [key, value] of Object.entries(iconData)) {
+    let newObject = (({ icon, isShowing, name, progressValue, ...o }) => o)(
+      value as any
+    );
     result[key] = newObject;
   }
   return result;
@@ -141,8 +149,10 @@ function serializeIconData(iconData) {
 
 function serializeColorData(colorData) {
   let result = {};
-  for(const [key, value] of Object.entries(colorData)) {
-    let newObject = (({ currentEffect, editableColors, ...o }) => o)(value as any)
+  for (const [key, value] of Object.entries(colorData)) {
+    let newObject = (({ currentEffect, editableColors, ...o }) => o)(
+      value as any
+    );
     result[key] = newObject;
   }
   return result;
@@ -160,7 +170,7 @@ export function saveUIDataToServer() {
     colors: serializedColorData,
   };
 
-  fetchNui('saveUISettings', sendData);
+  fetchNui("saveUISettings", sendData);
 }
 
 export async function saveUIDataToLocalStorage() {
@@ -169,20 +179,27 @@ export async function saveUIDataToLocalStorage() {
   const layoutData = get(LayoutStore);
   const profileData = get(ProfileStore);
 
-  localStorage.setItem(colorStoreLocalStorageName, JSON.stringify(
-    {
+  localStorage.setItem(
+    colorStoreLocalStorageName,
+    JSON.stringify({
       ...colorData.icons,
-      globalColorSettings: colorData.globalColorSettings
-    }));
+      globalColorSettings: colorData.globalColorSettings,
+    })
+  );
 
-  localStorage.setItem(playerStoreLocalStorageName, JSON.stringify(
-    {
+  localStorage.setItem(
+    playerStoreLocalStorageName,
+    JSON.stringify({
       ...playerStatusIcondata.icons,
       globalIconSettings: playerStatusIcondata.globalIconSettings,
       dynamicIcons: playerStatusIcondata.dynamicIcons,
-    }));
+    })
+  );
 
   localStorage.setItem(layoutStoreLocalStorageName, JSON.stringify(layoutData));
 
-  localStorage.setItem(profileLocalStorageName, JSON.stringify( {"profiles": profileData} ));
+  localStorage.setItem(
+    profileLocalStorageName,
+    JSON.stringify({ profiles: profileData })
+  );
 }

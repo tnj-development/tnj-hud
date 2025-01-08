@@ -2,6 +2,7 @@
   import { draggable } from '@neodrag/svelte';
   import { faSliders, faCircleNotch } from '@fortawesome/free-solid-svg-icons'
   import Fa from 'svelte-fa'
+  import { i18n } from '../utils/i18n';
 
   import MenuStore from '../stores/menuStore';
 
@@ -13,8 +14,8 @@
   const screenHeight: number = screen.height;
 
   let tabArray: Array<{name: string, icon: any, content: any, adminOnly: boolean}> = [
-    { name: "Hud Settings", icon: faSliders,     content: HudPanel, adminOnly: false },
-    { name: "Status Icons", icon: faCircleNotch, content: StatusIconsPanel, adminOnly: true },
+    { name: $i18n.hudSettings, icon: faSliders,     content: HudPanel, adminOnly: false },
+    { name: $i18n.statusIcons, icon: faCircleNotch, content: StatusIconsPanel, adminOnly: true },
   ];
   let activeTab: {name: string, icon: any, content: any} = tabArray[0];
 

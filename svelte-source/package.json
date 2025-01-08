@@ -19,6 +19,7 @@
     "tslib": "^2.7.0",
     "typescript": "^5.5.4",
     "vite": "^5.4.2",
+    "vite-plugin-static-copy": "^1.0.2",
     "vite-plugin-windicss": "^1.9.3",
     "windicss": "^3.5.6"
   },
